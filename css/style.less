@@ -10,6 +10,9 @@ td{text-align:left}
 img{border:0}
 a{color:#333}
 a:active{color:red}
+a:hover {
+  color: rgba(180, 50, 50, 1);
+}
 
 .container {
   margin: 0 auto;
@@ -238,7 +241,7 @@ a.button-secondary {
   border-bottom: 1px solid rgba(199,199,189,0.9);
   padding: 0.25em;
   // margin-top: 50px;
-  font-size: 150%;
+  font-size: 120%;
   font-weight: bold;
   letter-spacing: 0.1em;
 }
@@ -404,18 +407,35 @@ h1.n {
 
 
 
-
+.ln {
+  // width: 50%;
+  margin: 0 auto;
+  padding-top: 17px;
+  text-align: center;
+  font-size: 150%;
+  // border-bottom: 1px solid #ccc;
+}
 
 .ls {
+  margin-top: -65px;
   .thumb {
     display: block;
-    padding: 8px; 
+    padding: 1px; 
+    border: 1px solid #ddd;
+    margin: 5px;
+    &:hover {
+      border-color: rgba(255, 100, 100, 0.35);
+    }
   }
   .n {
     display: block;
     text-align: center;
     margin-bottom: 16px;
     text-transform: uppercase;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 
