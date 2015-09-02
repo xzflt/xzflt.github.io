@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AV</title>
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script src="/js/lib/jquery.min.js"></script>
+  <script src="/js/lib/store.min.js"></script>
+  <script src="/js/lib/AV.realtime.min.js"></script>
+  <script src="/js/lib.js"></script>
+</head>
+<body>
+  <a href="/chat.html">Chat</a>
+  <form id="sign">
+    <input name="email"><br>
+    <input name="username"><br>
+    <input name="password"><br>
+    <input id="sign" type="submit">
+  </form>
+  <form id="login">
+    <input name="username" value="lentg"><br>
+    <input name="password" value="123654"><br>
+    <input id="sign" type="submit">
+  </form>
+  <script>
+    $(function () {
+      var rt;
+      var appId = 'pimejb32ayn6tbat7aa3w2j01mwmsmdqwwhb5in5hv14jw9x';
+      AV.initialize(appId, "jeb9bgsohsh55th6qyi0ngnbqhpjzc39bj68xhwo32dwi2r6");
+
+      $('#sign').on('submit', function () {
+        // alert(this.email.value)
+        var clientId = this.username.value
+        var user = new AV.User()
+        user.set('email', this.email.value)
+        user.set('username', clientId)
+        user.set('password', this.password.value)
+        user.signUp(null, {
+          success: function (user) {
+            rt = AV.realtime({
+                appId: appId,
+                clientId: clientId,
+                encodeHTML: true,
+            });
+            rt.on('open', function () {
+              rt.room({members: ['info', clientId]}, function (room) {
+                user.set('room', room.id)
+                user.save()
+                store.set('user', {name: clientId, room: room.id})
+                // setCookie('room', room.id)
+                // setCookie('user', clientId)
+              })
+            })
+          },
+          error: function (user, error) {
+            console.log(error)
+          }
+        })
+        return false;
+      })
+
+      $('#login').on('submit', function () {
+        AV.User.logIn(this.username.value, this.password.value, {
+          success: function (user) {
+            if ('info' == user.get('username')) {
+              var query = new AV.Query(AV.User);
+              query.find({
+                success: function(data) {
+                  var clients = data.map(function (item) {
+                    return {name: item.get('username'), room: item.get('room')}
+                  })
+                  store.set('clients', clients)
+                }
+              });
+            } else{
+              store.set('user', {name: user.get('username'), room: user.get('room')})
+              // setCookie('room', user.get('room'))
+              // setCookie('user', user.get('username'))
+              window.location = '/chat.html'
+            };
+          },
+          error: function (user, error) {
+            console.log(error)
+          }
+        })
+        return false;
+      })
+      
+    })
+  </script>
+</body>
+</html>
+
+
+<!-- 
+realtimeObj.on('open', function() {
+    console.log('实时通信服务建立成功！');
+
+    // 创建一个聊天室，conv 是 conversation 的缩写，也可以用 room 方法替换
+    conversationObj = realtimeObj.conv({
+        // 人员的 id
+        members: [
+            'LeanCloud02'
+        ],
+        // 默认名字
+        name: 'LeanCloud-Room',
+        // 默认的属性，可以放 Conversation 的一些初始值等
+        attr: {
+            test: 'testTitle'
+        }
+    }, function(data) {
+        if (data) {
+            console.log('Conversation 创建成功!', data);
+        }
+    });
+}); -->

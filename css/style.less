@@ -252,6 +252,17 @@ a.button-secondary {
 .tags {
   margin-right: 4em;
   font-size: 14px;
+  height: 118px;
+  // overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-transition: 0.5s ease;
+  -moz-transition: 0.5s ease;
+  -o-transition: 0.5s ease;
+  -ms-transition: 0.5s ease;
+  transition: 0.5s ease;
+  &:hover {
+    height: 280px;
+  }
   li {
     float: left;
     margin: 0.2em .5em;
@@ -262,7 +273,7 @@ a.button-secondary {
     }
   }
   .col {
-    width: 50%;
+    width: 48%;
     float: left;
     li {
       width: 100%;

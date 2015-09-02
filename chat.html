@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat</title>
+  <script src="/js/lib/jquery.min.js"></script>
+  <script src="/js/lib/store.min.js"></script>
+  <script src="/js/lib/AV.realtime.min.js"></script>
+  <script src="/js/lib.js"></script>
+</head>
+<body>
+  <h1>Chat</h1>
+  <ul id="msgs"></ul>
+  <form onsubmit=" return say(this);">
+    <input name="msg">
+    <input type="submit">
+  </form>
+  <script>
+    var appId = 'pimejb32ayn6tbat7aa3w2j01mwmsmdqwwhb5in5hv14jw9x'
+    var user = store.get('user')
+    var room;
+    var $msgs = $('#msgs')
+
+    // console.log(user.name)
+
+    var rt = AV.realtime({
+      appId: appId,
+      clientId: user.name,
+      encodeHTML: true
+    })
+
+    rt.on('open', function () {
+      rt.room(user.room, function(obj) {
+        if (obj) {
+          console.log('get room! ' + obj.id);
+          things(obj)
+        } else{
+          alert('room not exists');
+        };
+      })
+    })
+
+
+    function things (conv) {
+      room = conv
+      room.log(function (rs) {
+        var html = ''
+        rs.forEach(function (log) {
+          html += '<li><b>'+log.from+'</b>: '+log.msg+'</li>'
+        })
+        document.getElementById('msgs').innerHTML = html
+      })
+      room.receive(function (data) {
+        var html = '<li><b>'+data.fromPeerId+'</b>: '+data.msg+'</li>'
+        $msgs.append(html)
+      })
+    }
+
+    function say (e) {
+      var txt = e.msg.value
+      room.send(txt)
+      e.msg.value = ''
+      var html = '<li><b>'+user.name+'</b>: '+txt+'</li>'
+      $msgs.append(html)
+      return false;
+    }
+
+
+    // function $ (id) {
+    //   return document.getElementById(id)
+    // }
+  </script>
+</body>
+</html>

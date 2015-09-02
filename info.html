@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat</title>
+  <link rel="stylesheet" type="text/css" href="/css/chat.css">
+  <script src="/js/lib/jquery.min.js"></script>
+  <script src="/js/lib/store.min.js"></script>
+  <script src="/js/lib/AV.realtime.min.js"></script>
+  <script src="/js/lib.js"></script>
+</head>
+<body>
+  <ul id="users"></ul>
+  <ul id="msgs"></ul>
+  <ul id="input-box">
+    <form onsubmit=" return say(this);">
+      <input name="msg">
+      <input type="submit">
+    </form>
+  </ul>
+  <script>
+    var appId = 'pimejb32ayn6tbat7aa3w2j01mwmsmdqwwhb5in5hv14jw9x'
+    var clients = store.get('clients')
+    var room;
+    var from;
+    var $users = $('#users')
+    var $msgs = $('#msgs')
+
+    if (!clients[0]) {
+      window.location = '/sign.html'
+    };
+    // rooms = rooms.split(',')
+
+    var rt = AV.realtime({
+      appId: appId,
+      clientId: 'info',
+      encodeHTML: true
+    })
+
+    rt.on('message', function (data) {
+      console.log(data)
+      var li = '<li><b>'+data.fromPeerId+'</b>: '+data.msg+'</li>'
+      $('msgs').innerHTML += li
+    })
+
+
+    var lis = clients.map(function (client) {
+      return '<li id="'+client.room+'">'+client.name+'</li>'
+    })
+    console.log(lis)
+    $users.html(lis.join(''))
+
+    $(function () {
+      $('#users li').on('click', function () {
+        from = this.innerHTML
+        rt.room(this.id, function (obj) {
+          things(obj)
+        })
+      })
+    })
+
+
+    function things (conv) {
+      room = conv
+      room.log(function (logs) {
+        var tmp = logs.map(function (log) {
+          return '<li><b>'+log.fromPeerId+'</b>: '+log.msg+'</li>'
+        })
+        $msgs.html(tmp.join(''))
+        scroll()
+      })
+
+      room.receive(function (data) {
+        var html = '<li><b>'+data.fromPeerId+'</b>: '+data.msg+'</li>'
+        $msgs.append(html)
+        scroll()        
+      })
+
+    }
+
+    function say (e) {
+      var txt = e.msg.value
+      room.send(txt)
+      e.msg.value = ''
+      var html = '<li><b>Info</b>: '+txt+'</li>'
+      $msgs.append(html)
+      scroll()
+      return false;
+    }
+
+    function scroll () {
+      $msgs.scrollTop($msgs[0].scrollHeight)
+    }
+
+    // function $ (id) {
+    //   return document.getElementById(id)
+    // }
+  </script>
+</body>
+</html>
