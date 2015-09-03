@@ -46,8 +46,6 @@
                 user.set('room', room.id)
                 user.save()
                 store.set('user', {name: clientId, room: room.id})
-                // setCookie('room', room.id)
-                // setCookie('user', clientId)
               })
             })
           },
@@ -65,16 +63,19 @@
               var query = new AV.Query(AV.User);
               query.find({
                 success: function(data) {
-                  var clients = data.map(function (item) {
-                    return {name: item.get('username'), room: item.get('room')}
+                  var clients = []
+                  data.forEach(function (item) {
+                    var name = item.get('username')
+                    if ('info'!=name) {
+                      clients.push({name: name, room: item.get('room')})
+                    };
                   })
                   store.set('clients', clients)
+                  window.location = '/info.html'
                 }
               });
             } else{
               store.set('user', {name: user.get('username'), room: user.get('room')})
-              // setCookie('room', user.get('room'))
-              // setCookie('user', user.get('username'))
               window.location = '/chat.html'
             };
           },
