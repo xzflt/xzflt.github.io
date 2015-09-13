@@ -16,7 +16,7 @@ ul {
   left: 0;
   width: 20%;
   height: 100%;
-  background: #cce;
+  background: #ccccee url(/img/chat.jpg);
 }
 #users li {
   padding: 8px;
@@ -35,6 +35,7 @@ ul {
   right: 0;
   bottom: 0;
   padding-bottom: 72px;
+  background: #ccccee url(/img/chat.jpg) center -178px;
   overflow: auto;
 }
 #msgs li {
@@ -52,13 +53,13 @@ ul {
   right: 15px;
   bottom: 0;
   left: 20%;
-  background: #fff;
   height: 68px;
 }
 #input-box input {
   display: block;
   width: 90%;
   margin: 0 auto;
+  opacity: 0.75;
   background: padding-box #ffffff;
   font-size: 18px;
   line-height: 1.2rem;

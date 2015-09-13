@@ -2,18 +2,155 @@
 <html>
 <head>
   <title>Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="/js/lib/jquery.min.js"></script>
   <script src="/js/lib/store.min.js"></script>
   <script src="/js/lib/AV.realtime.min.js"></script>
   <script src="/js/lib.js"></script>
+  <style type="text/css">
+    html,
+    body {
+      position: relative;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: url(/img/chat.jpg);
+    }
+    ul {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+    h1 {
+      position: fixed;
+      top: 0;
+      margin: 0;
+      left: 0;
+      right: 0;
+      background: #054dd7;
+      text-align: center;
+      z-index: 1;
+    }
+    #msgs {
+      position: absolute;
+      top: 0;
+      left: 0%;
+      right: 0%;
+      padding: 0 25%;
+      bottom: 0;
+      padding-bottom: 72px;
+      overflow: auto;
+    }
+    #msgs li {
+      padding: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    #msgs li.info:before {
+      content: url('/img/info.jpeg');
+    }
+    #msgs li.os:before {
+      content: url('/img/client.png');
+    }
+    .contact {
+      position: relative;
+      color: red;
+    }
+    .contact div {
+      position: absolute;
+      top: -280px;
+      left: -280px;
+      opacity: 0.85;
+    }
+    @media (min-width: 768px) {
+      #input-box {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 0 25%;
+        height: 68px;
+      }
+      #input-box input {
+        opacity: 0.65;
+        display: block;
+        width: 90%;
+        margin: 0 auto;
+        background: padding-box #ffffff;
+        font-size: 18px;
+        line-height: 1.2rem;
+        border: 2px solid #E0E0E0;
+        font-family: Lato, appleLogo, sans-serif;
+        color: #3d3c40;
+        -webkit-appearance: none;
+        box-shadow: none;
+        outline: 0;
+        min-height: 28px!important;
+        padding: 8px 40px 8px 8px;
+        max-height: 160px!important;
+        resize: none!important;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+        /*border-radius: 6px;*/
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        /*background: url(/img/chat.jpg) center top;*/
+        background-position: -860px -185px;
+      }
+      #msgs {
+        padding: 0;
+        padding-bottom: 56px;
+      }
+      #input-box {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 0 25%;
+        padding: 0;
+        bottom: 0;
+      }
+      #input-box input {
+        opacity: 0.65;
+        display: block;
+        width: 100%;
+        margin: 0 auto;
+        background: padding-box #ffffff;
+        font-size: 18px;
+        line-height: 1.2rem;
+        border: 2px solid #E0E0E0;
+        font-family: Lato, appleLogo, sans-serif;
+        color: #3d3c40;
+        -webkit-appearance: none;
+        box-shadow: none;
+        outline: 0;
+        min-height: 28px!important;
+        padding: 8px 40px 8px 8px;
+        max-height: 160px!important;
+        resize: none!important;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>Chat</h1>
   <ul id="msgs"></ul>
-  <form onsubmit=" return say(this);">
-    <input name="msg">
-    <input type="submit">
-  </form>
+  <ul id="input-box" class="c">
+    <form onsubmit=" return say(this);">
+      <input name="msg">
+    </form>
+    <div class="contact">
+      <div>
+        <img src="/img/chat3.png" width="230">
+      </div>
+    </div>
+  </ul>
   <script>
     var appId = 'pimejb32ayn6tbat7aa3w2j01mwmsmdqwwhb5in5hv14jw9x'
     var user = store.get('user')
@@ -21,6 +158,9 @@
     var $msgs = $('#msgs')
 
     // console.log(user.name)
+    if (!user) {
+      window.location = '/sign.html'
+    };
 
     var rt = AV.realtime({
       appId: appId,
@@ -48,10 +188,12 @@
           html += '<li><b>'+log.from+'</b>: '+log.msg+'</li>'
         })
         document.getElementById('msgs').innerHTML = html
+        scroll()
       })
       room.receive(function (data) {
         var html = '<li><b>'+data.fromPeerId+'</b>: '+data.msg+'</li>'
         $msgs.append(html)
+        scroll()
       })
     }
 
@@ -61,9 +203,13 @@
       e.msg.value = ''
       var html = '<li><b>'+user.name+'</b>: '+txt+'</li>'
       $msgs.append(html)
+      scroll()
       return false;
     }
 
+    function scroll () {
+      $msgs.scrollTop($msgs[0].scrollHeight)
+    }
 
     // function $ (id) {
     //   return document.getElementById(id)
